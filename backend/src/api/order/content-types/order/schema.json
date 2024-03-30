@@ -4,36 +4,19 @@
   "info": {
     "singularName": "order",
     "pluralName": "orders",
-    "displayName": "Order"
+    "displayName": "Order",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
   },
   "pluginOptions": {},
   "attributes": {
-    "total": {
-      "type": "float"
-    },
-    "paymentMethod": {
-      "type": "enumeration",
-      "enum": [
-        "cod",
-        "bkash",
-        "nagod"
-      ]
-    },
-    "status": {
-      "type": "enumeration",
-      "enum": [
-        "placed",
-        "shipped",
-        "delivered"
-      ]
+    "stripeid": {
+      "type": "string"
     },
     "products": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::product.product"
+      "type": "json"
     }
   }
 }

@@ -1,0 +1,5 @@
+{
+    "typescript.check.npmIsInstalled": true,
+    "typescript.reportStyleChecksAsWarnings": true,
+    "js/ts.implicitProjectConfig.strictNullChecks": true
+}

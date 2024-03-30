@@ -4,6 +4,8 @@ import { addToCart, removeFromCart } from '@/lib/features/userReducer';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
+import { loadStripe } from '@stripe/stripe-js';
+import axios from 'axios';
 
 
 // id={product.id}
@@ -33,6 +35,7 @@ export default function Cart() {
                 total += item.attributes.price*item.attributes.quantity;
             })
             setTotal(total);
+            console.log(cart);
         }
     }, [cart])
 
@@ -43,6 +46,35 @@ export default function Cart() {
 
     const handleAddToCart = (product) => {
       dispatch(addToCart(product));
+    }
+
+    const stripePromise = loadStripe(`${process.env.STRIPE_PUBLISHABLE_KEY}`);
+
+    const handlePayment = async () => {
+      try {
+        const stripe = await stripePromise;
+
+        console.log('inside handlePayment function');
+
+        const response = await fetch('http://localhost:1337/api/orders', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({cart})
+          // body: cart
+        })
+
+        // const response = await axios.post('http://localhost:1337/api/orders', {cart});
+
+        console.log(response);
+
+        await stripe.redirectToCheckout({
+          sessionId: response.data.stripeSession.id,
+        });
+      } catch (error) {
+        console.log(error);
+      }
     }
 
   return (
@@ -84,7 +116,7 @@ export default function Cart() {
               <p>VAT (5%): {total*0.05}</p>
               <p>Total   : {total + (total*0.05)}</p>
             </div>
-            <button className="bg-black text-white hover:bg-white hover:text-black font-semibold my-1 py-2 px-16 border border-gray-400 rounded shadow">Checkout</button>
+            <button onClick={handlePayment} className="bg-black text-white hover:bg-white hover:text-black font-semibold my-1 py-2 px-16 border border-gray-400 rounded shadow">Checkout</button>
           </div>
         )
       }
